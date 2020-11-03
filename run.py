@@ -1,6 +1,8 @@
 from nnf import Var
 from lib204 import Encoding
-
+'''
+Version last modified Nov 2nd 2020
+'''
 # Propositions
 # price
 price = []
@@ -61,8 +63,10 @@ def example_theory():
     E.add_constraint(dietrestrictions[3] & (diettype[0] | diettype[1] | diettype[2]))
 
     # accommodate three of the restrictions (Yes I know they don't go in logical order this is just what I have written down)
-    # whoops actually need to consult nick about this
-    # E.add_constraint(   )
+    # accommodate three of the restrictions (Yes I know they don't go in logical order this is just what I have written down)
+    E.add_constraint(dietrestrictions[1] & dietrestrictions[3] & (diettype[0] | diettype[2]))
+    E.add_constraint(dietrestrictions[1] & dietrestrictions[0] & (diettype[3] | diettype[2]))
+    E.add_constraint(dietrestrictions[1] & dietrestrictions[2] & (diettype[3] | diettype[0]))
 
     # Eating location? not too sure what to call this
     # all three (dine-in, take-out and delivery)
