@@ -3,6 +3,24 @@ from lib204 import Encoding
 '''
 Version last modified Nov 2nd 2020
 '''
+'''
+Customer class
+
+Used to create a class containing the various restrictions a 
+person might have with a restaurant
+Paramaters:
+    price: Price range being searched for
+    diet: any diet restrictions
+    dine_opt: preferred dining options
+'''
+class customer:
+    def __init__(self, price, diet, dine_opt):
+        self.price = price
+        self.diet = diet
+        self.dine_opt = dine_opt
+
+
+
 # Propositions
 # price
 price = []
