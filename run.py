@@ -1,8 +1,6 @@
 from nnf import Var
 from lib204 import Encoding
-'''
-Version last modified Nov 2nd 2020
-'''
+
 '''
 Customer class
 
@@ -20,6 +18,19 @@ class customer:
         self.dine_opt = dine_opt
 
 
+'''
+Restaurant class
+
+Used to create a class containing information on a resaurant.
+Makes it easier to track data involving each restaurant
+'''
+class restaurant:
+    def __init__(self):
+        # Need more info on whats going to be passed to make sure its all good
+        pass
+
+'''
+Have this here for reference, I know it is not how its supposed to work using this lib
 
 # Propositions
 # price
@@ -43,19 +54,10 @@ for i in range(4):
 dine_options = []
 for i in range(3):
     dine_options.append(Var(f"dine_opt_{i}"))
+'''
 
-#
-# Build an example full theory for your setting and return it.
-#
-#  There should be at least 10 variables, and a sufficiently large formula to describe it (>50 operators).
-#  This restriction is fairly minimal, and if there is any concern, reach out to the teaching staff to clarify
-#  what the expectations are.
 def example_theory():
     E = Encoding()
-    # reference for my peanut brain
-    # E.add_constraint(a | b)
-    # E.add_constraint(~a | ~x)
-    # E.add_constraint(c | y | z)
 
     # this is where our theory starts
 
@@ -103,6 +105,7 @@ def example_theory():
 
 
 if __name__ == "__main__":
+    # This is where we will get user input information and whatnot
 
     T = example_theory()
 
