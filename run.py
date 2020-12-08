@@ -25,12 +25,14 @@ Used to create a class containing information on a resaurant.
 Makes it easier to track data involving each restaurant
 '''
 class restaurant:
-    def __init__(self):
+    def __init__(self, price_rng, diet_1, delivery, distance):
+        self.price_rng = price_rng
+        self.diet_1 = diet_1
+        self.delivery = delivery
+        self.distance = distance
         # Need more info on whats going to be passed to make sure its all good
-        pass
 
-'''
-Have this here for reference, I know it is not how its supposed to work using this lib
+# Have this here for reference, I know it is not how its supposed to work using this lib
 
 # Propositions
 # price
@@ -54,7 +56,7 @@ for i in range(4):
 dine_options = []
 for i in range(3):
     dine_options.append(Var(f"dine_opt_{i}"))
-'''
+
 
 def example_theory():
     E = Encoding()
@@ -106,12 +108,54 @@ def example_theory():
 
 if __name__ == "__main__":
     # This is where we will get user input information and whatnot
+    flag = True
 
-    T = example_theory()
+    # While loop to start
+    while flag:
 
-    print("\nSatisfiable: %s" % T.is_satisfiable())
-    print("# Solutions: %d" % T.count_solutions())
-    print("   Solution: %s" % T.solve())
+        # Asking if user wants to continue or exit
+        prog_exit = input('Welcome to the Queens restuarant finder! Press Q to quit or enter to continue.\n')
+
+        # if statement to exit
+        if prog_exit.lower() == 'q':
+            break
+
+        # Getting users price range information
+        user_price = int(input('Please select a price range: \n 1. $ - most affordable'\
+            '\n 2. $$ - intermediate \n 3. $$$ - most expensive\n'))
+
+        # Telling user which price was selected
+        if user_price in [1,2,3]:
+            if user_price == 1:
+                print('You selected $.')
+            elif user_price == 2:
+                print('You selected $$.')
+            else:
+                print('You selected $$$')
+        else:
+            print('Invalid input: Must be either option 1, 2 or 3')
+        
+        user_restrictions_in = input('Please select the following diet restrictions (please separate by a comma if selecting multiple): \n 1. Vegan \n 2. Vegetarian \n 3. Gluten-free \n 4. lactose intolerant \n 5. No restrictions\n')
+
+        user_selected_restrictions = user_restrictions_in.split(',')
+
+        for entry in range(len(user_selected_restrictions)):
+            user_selected_restrictions[entry] = int(user_selected_restrictions[entry])
+
+        # user = new customer()
+        T = example_theory()
+
+        print("\nSatisfiable: %s" % T.is_satisfiable())
+        print("# Solutions: %d" % T.count_solutions())
+        print("   Solution: %s" % T.solve())
+
+
+
+    # T = example_theory()
+
+    # print("\nSatisfiable: %s" % T.is_satisfiable())
+    # print("# Solutions: %d" % T.count_solutions())
+    # print("   Solution: %s" % T.solve())
 
 '''
 Haven't implemented this w/ our variables
