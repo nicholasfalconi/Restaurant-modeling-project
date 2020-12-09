@@ -23,6 +23,8 @@ Restaurant class
 
 Used to create a class containing information on a resaurant.
 Makes it easier to track data involving each restaurant
+
+actually will be implemented in the csv reader so this is irrelavant
 '''
 class restaurant:
     def __init__(self, price_opt, diet_opt, delivery_opt, distance_opt):
@@ -32,33 +34,60 @@ class restaurant:
         self.distance = distance_opt
         # Need more info on whats going to be passed to make sure its all good
 
+# # Have this here for reference, I know it is not how its supposed to work using this lib
+
+# # Propositions
+# # price
+# price = []
+# for i in range(3):
+#     price.append(Var(f"price_{i}"))
+
+# # diet restrictions
+# # index 0 - 3 with each index corresponding to a certain dietary restriction
+# # index 0 = gluten free, index 1 = vegan, index 2 = vegetrarian, index 3 = lactose
+# diettype = []
+# for i in range(4):
+#     diettype.append(Var(f"diettype_{i}"))
+
+# dietrestrictions = []
+# for i in range(4):
+#     dietrestrictions.append(Var(f"dietrstrct_{i}"))
+
+# # Dine-in, take-out, delivery
+# # index 0 = dine-in, index 1 = take-out, index 2 = delivery
+# dine_options = []
+# for i in range(3):
+#     dine_options.append(Var(f"dine_opt_{i}"))
+
+
+def example_theory():
+
 # Have this here for reference, I know it is not how its supposed to work using this lib
 
 # Propositions
 # price
-price = []
-for i in range(3):
-    price.append(Var(f"price_{i}"))
+    price = []
+    for i in range(3):
+        price.append(Var(f"price_{i}"))
 
 # diet restrictions
 # index 0 - 3 with each index corresponding to a certain dietary restriction
 # index 0 = gluten free, index 1 = vegan, index 2 = vegetrarian, index 3 = lactose
-diettype = []
-for i in range(4):
-    diettype.append(Var(f"diettype_{i}"))
+    diettype = []
+    for i in range(4):
+        diettype.append(Var(f"diettype_{i}"))
 
-dietrestrictions = []
-for i in range(4):
-    dietrestrictions.append(Var(f"dietrstrct_{i}"))
+    dietrestrictions = []
+    for i in range(4):
+        dietrestrictions.append(Var(f"dietrstrct_{i}"))
 
 # Dine-in, take-out, delivery
 # index 0 = dine-in, index 1 = take-out, index 2 = delivery
-dine_options = []
-for i in range(3):
-    dine_options.append(Var(f"dine_opt_{i}"))
+    dine_options = []
+    for i in range(3):
+        dine_options.append(Var(f"dine_opt_{i}"))
 
 
-def example_theory():
     E = Encoding()
 
     # this is where our theory starts
@@ -113,6 +142,8 @@ if __name__ == "__main__":
     # While loop to start
     while flag:
 
+        # creating example theory
+        T = example_theory()
         # Asking if user wants to continue or exit
         prog_exit = input('Welcome to the Queens restuarant finder! Press Q to quit or enter to continue.\n')
 
@@ -158,12 +189,6 @@ if __name__ == "__main__":
         # Creating customer class to store information in an object for easier access
         user = customer(user_price, user_selected_restrictions, user_dine_option)
         
-        # print(user.userdiet)
-        # print(user.userdine_opt)
-        # print(user.userprice)
-
-        T = example_theory()
-
         print("\nSatisfiable: %s" % T.is_satisfiable())
         print("# Solutions: %d" % T.count_solutions())
         print("   Solution: %s" % T.solve())
