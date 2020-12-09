@@ -149,11 +149,11 @@ if __name__ == "__main__":
             user_selected_restrictions[entry] = int(user_selected_restrictions[entry])
 
         # Getting user preference for dining options
-        user_dine_option = int(input('Please select a dining option: \n 1. Dine-in \n 2. Take-out\n 3. Delivery'))
+        user_dine_option = int(input('Please select a dining option: \n 1. Dine-in \n 2. Take-out\n 3. Delivery\n'))
 
         # Getting user preference for distance
         user_distance_option = int(input('Please select a distance from Queens campus:'
-        ' \n 1. Under 10 minutes \n 2. Between 10 and 20 minutes \n 3. Over 20 minutes'))
+        ' \n 1. Under 10 minutes \n 2. Between 10 and 20 minutes \n 3. Over 20 minutes\n'))
 
         # Creating customer class to store information in an object for easier access
         user = customer(user_price, user_selected_restrictions, user_dine_option)
