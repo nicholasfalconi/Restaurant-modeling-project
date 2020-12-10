@@ -1,5 +1,6 @@
 from nnf import Var
 from nnf import Or
+import nnf
 from lib204 import Encoding
 from csvReader import readCSV
 
@@ -40,137 +41,188 @@ time_over_20 = Var('over 20')
 
 #Restaurant
 
-# price constraints (works)
-def priceConstraint(restaurant,customer):
-    if customer.userprice == "low":
+# Adding constraints for price constraints
+def price_constraint(restaurant,customer):
+    if "low" in customer.userprice:
         if restaurant.price == "$":
             return low & ~med & ~high
         else:
             return low & ~low
 
-    if customer.userprice == "med":
+    if "med" in customer.userprice:
         if restaurant.price == "$$":
             return med & ~high & ~low
         else:
             return med & ~med
 
-    if customer.userprice == "high":
+    if "high" in customer.userprice:
         if restaurant.price == "$$$":
             return high & ~low & ~med
         else:
             return high & ~high
 
-# gluten constraints (works)
-def glutenConstraint(restaurant,customer):
+
+# adding constraints for 1 dietary restrictions
+def single_diet_constraint(restaurant, customer):
+    
     if 'gluten' in customer.userdiet:
-        if restaurant.diet[2] == 'TRUE':
-            return gluten
+        if 'TRUE' in restaurant.diet[2]:
+            return gluten & ~vegan & ~vegetarian & ~lactose
         else:
             return ~gluten & gluten
 
-def lactoseConstraint(restaurant,customer):
-    if 'lactose' in customer.userdiet:
-        if restaurant.diet[3] == 'TRUE':
-            return lactose
+    elif 'lactose' in customer.userdiet:
+        if 'TRUE' in restaurant.diet[3]:
+            return ~gluten & ~vegan & ~vegetarian & lactose
         else:
             return ~lactose & lactose
 
-# vegan constraints (works)
-def veganConstraint(restaurant,customer):
-    if 'vegan' in customer.userdiet:
-        if restaurant.diet[0] == 'TRUE':
-            return vegan
-        else:
-            return ~vegan & vegan
-def vegetarianConstraint(restaurant,customer):
-    if 'vegeterian' in customer.userdiet:
-        if restaurant.diet[1] == 'TRUE':
-            return vegetarian
+    elif 'vegetarian' in customer.userdiet:
+        if 'TRUE' in restaurant.diet[1]:
+            return ~gluten & ~vegan & vegetarian & ~lactose
         else:
             return ~vegetarian & vegetarian
 
-def diet_constraints(restaurant, customer):
-    if 'gluten' in customer.userdiet:
-        if restaurant.diet[2] == 'TRUE':
-            return gluten
-        else:
-            return ~gluten & gluten    
-    if 'lactose' in customer.userdiet:
-        if restaurant.diet[3] == 'TRUE':
-            return lactose
-        else:
-            return ~lactose & lactose
-
-
-def single_diet_constraint(restaurant, customer):
-    if 'gluten' in customer.userdiet:
-        if restaurant.diet[2] == 'TRUE':
-            return gluten
-        else:
-            return ~gluten    
-    elif 'lactose' in customer.userdiet:
-        if restaurant.diet[3] == 'TRUE':
-            return lactose
-        else:
-            return ~lactose & lactose
-    elif 'vegeterian' in customer.userdiet:
-        if restaurant.diet[1] == 'TRUE':
-            return vegetarian
-        else:
-            return ~vegetarian
     elif 'vegan' in customer.userdiet:
-        if restaurant.diet[0] == 'TRUE':
-            return vegan
+        if 'TRUE' in restaurant.diet[0]:
+            return ~gluten & vegan & ~vegetarian & ~lactose
         else:
-            return ~vegan
+            return ~vegan & vegan
 
+# adding constraints for 2 dietary restrictions
 def two_diet_constraint(restaurant, customer):
+    
     if ('vegetarian' in customer.userdiet) and ('vegan' in customer.userdiet):
-        if restaurant.diet[0] == 'TRUE' and restaurant.diet[1] == 'TRUE':
+        if ('TRUE' in restaurant.diet[0]) and ('TRUE' in restaurant.diet[1]):
             return vegetarian & vegan & ~lactose & ~gluten
-    elif ()
+        else: 
+            return vegetarian & ~vegetarian
+        
+    elif ('vegan' in customer.userdiet) and ('lactose' in customer.userdiet): 
+        if ('TRUE' in restaurant.diet[0]) and ('TRUE' in restaurant.diet[3]):
+            return ~vegetarian & vegan & lactose & ~gluten
+        else: 
+            return vegan & ~vegan
 
+    elif ('vegan' in customer.userdiet) and ('gluten' in customer.userdiet): 
+        if ('TRUE' in restaurant.diet[0]) and ('TRUE' in restaurant.diet[2]):
+            return ~vegetarian & vegan & ~lactose & gluten
+        else: 
+            return vegan & ~vegan
+
+    elif ('gluten' in customer.userdiet) and ('lactose' in customer.userdiet): 
+        if ('TRUE' in restaurant.diet[2]) and ('TRUE' in restaurant.diet[3]):
+            return ~vegetarian & ~vegan & lactose & gluten
+        else: 
+            return gluten & ~gluten
+
+    elif ('gluten' in customer.userdiet) and ('vegitarian' in customer.userdiet): 
+        if ('TRUE' in restaurant.diet[2]) and ('TRUE' in restaurant.diet[1]):
+            return vegetarian & ~vegan & ~lactose & gluten
+        else: 
+            return gluten & ~gluten
+
+    elif ('lactose' in customer.userdiet) and ('vegitarian' in customer.userdiet): 
+        if ('TRUE' in restaurant.diet[1]) and ('TRUE' in restaurant.diet[1]):
+            return vegetarian & ~vegan & lactose & ~gluten
+        else: 
+            return lactose & ~lactose
+
+# adding constraints for 3 dietary restrictions
+def three_diet_constraint(restaurant,customer):
+    if ('vegetarian' in customer.userdiet) and ('vegan' in customer.userdiet) and ('gluten' in customer.userdiet):
+        if ('TRUE' in restaurant.diet[0]) and ('TRUE' in restaurant.diet[1]) and ('TRUE' in restaurant.diet[2]):
+            return vegetarian & vegan & ~lactose & gluten
+        else: 
+            return vegetarian & ~vegetarian
+
+    elif ('vegetarian' in customer.userdiet) and ('vegan' in customer.userdiet) and ('lactose' in customer.userdiet):
+        if ('TRUE' in restaurant.diet[0]) and ('TRUE' in restaurant.diet[1]) and ('TRUE' in restaurant.diet[3]):
+            return vegetarian & vegan & lactose & ~gluten
+        else: 
+            return vegetarian & ~vegetarian
+
+    elif ('gluten' in customer.userdiet) and ('vegan' in customer.userdiet) and ('lactose' in customer.userdiet):
+        if ('TRUE' in restaurant.diet[2]) and ('TRUE' in restaurant.diet[1]) and ('TRUE' in restaurant.diet[3]):
+            return ~vegetarian & vegan & lactose & gluten
+        else: 
+            return vegetarian & ~vegetarian
+
+# adding constraints for all dietary restrictions
+def all_diet_constraint(restaurant,customer):
+    if ('vegetarian' in customer.userdiet) and ('vegan' in customer.userdiet) and ('gluten' in customer.userdiet) and ('lactose' in customer.userdiet):
+        if ('TRUE' in restaurant.diet[0]) and ('TRUE' in restaurant.diet[1]) and ('TRUE' in restaurant.diet[2]) and ('TRUE' in restaurant.diet[3]):
+            return vegetarian & vegan & lactose & gluten
+        else: 
+            return vegetarian & ~vegetarian
 
 # works
-# def dineInConstraint(restaurant,customer):
-#     if customer.userdine_opt == 'dine-in':
-#         if restaurant.delivery[0] == 'TRUE':
-#             return dine_in
-#         else:
-#             return ~dine_in
-
-# def takeOutConstraint(restaurant,customer):
-#     if customer.userdine_opt == 'take-out':
-#         if restaurant.delivery[1] == 'TRUE':
-#             return take_out
-#         else:
-#             return ~take_out
-
-# def deliveryConstraint(restaurant,customer):
-#     if customer.userdine_opt == 'delivery':
-#         if restaurant.delivery[2] == 'TRUE':
-#             return delivery
-#         else:
-#             return ~delivery
-
-# Works
-def dining_constraints(restaurant, customer):
+def dineInConstraint(restaurant,customer):
     if customer.userdine_opt == 'dine-in':
         if restaurant.delivery[0] == 'TRUE':
             return dine_in
         else:
-            return ~dine_in    
+            return ~dine_in & dine_in
+
+def takeOutConstraint(restaurant,customer):
     if customer.userdine_opt == 'take-out':
         if restaurant.delivery[1] == 'TRUE':
             return take_out
         else:
-            return ~take_out
+           return ~take_out & take_out
+
+def deliveryConstraint(restaurant,customer):
     if customer.userdine_opt == 'delivery':
         if restaurant.delivery[2] == 'TRUE':
             return delivery
         else:
-            return ~delivery
+            return ~delivery & delivery
 
+
+def one_dining_constraints(restaurant, customer):
+    if 'dine-in' in customer.userdine_opt:
+        if restaurant.delivery[0] == 'TRUE':
+            return dine_in
+        else:
+            return ~dine_in & dine_in 
+
+    elif 'take-out' in customer.userdine_opt:
+        if restaurant.delivery[1] == 'TRUE':
+            return take_out
+        else:
+            return ~take_out & take_out
+
+    elif 'delivery' in customer.userdine_opt:
+        if restaurant.delivery[2] == 'TRUE':
+            return delivery
+        else:
+            return ~delivery & delivery
+
+def two_dining_constraints(restaurant, customer):
+    if ('dine-in' in customer.userdine_opt) and ('take-out' in customer.userdine_opt):
+        if restaurant.delivery[0] == 'TRUE' & restaurant.delivery[1] == 'TRUE':
+            return dine_in & take_out & ~delivery
+        else:
+            return ~dine_in & dine_in 
+
+    elif ('dine-in' in customer.userdine_opt) and ('delivery' in customer.userdine_opt):
+        if restaurant.delivery[0] == 'TRUE' & restaurant.delivery[2] == 'TRUE':
+            return dine_in & ~take_out & delivery
+        else:
+            return ~dine_in & dine_in
+    
+    elif ('take-out' in customer.userdine_opt) and ('delivery' in customer.userdine_opt):
+        if restaurant.delivery[1] == 'TRUE' & restaurant.delivery[2] == 'TRUE':
+            return ~dine_in & take_out & delivery
+        else:
+            return ~dine_in & dine_in
+
+def all_dining_constraints(restaurant, customer):
+    if ('take-out' in customer.userdine_opt) and ('delivery' in customer.userdine_opt) and ('dine-in' in customer.userdine_opt):
+        if restaurant.delivery[0] == 'TRUE' and restaurant.delivery[1] == 'TRUE' and restaurant.delivery[2] == 'TRUE':
+            return dine_in & take_out & delivery
+        else:
+            return ~dine_in & dine_in 
 
 # distance constraints (works)
 def distanceConstraint(restaurant,customer):
@@ -197,10 +249,11 @@ def example_theory(restaurant,customer):
     r = restaurant
     c = customer
     E = Encoding()
-    # constraints = [priceConstraint(r,c), dineInConstraint(r,c), takeOutConstraint(r,c), deliveryConstraint(r,c), distanceConstraint(r,c), glutenConstraint(r,c), lactoseConstraint(r,c), veganConstraint(r,c), vegetarianConstraint(r,c)]
+    constraints = []
 
-    # E.add_constraint(Or(constraints))
-    E.add_constraint(two_diet_constraint(r,c))
+    constraints = [price_constraint(r,c), single_diet_constraint(r,c),two_diet_constraint(r,c),three_diet_constraint(r,c), three_diet_constraint(r,c),all_diet_constraint(r,c),dineInConstraint(r,c), takeOutConstraint(r,c), deliveryConstraint(r,c), one_dining_constraints(r,c), two_dining_constraints(r,c), all_dining_constraints(r,c), distanceConstraint(r,c)]
+
+    E.add_constraint(nnf.Or(constraints))
 
     return E
 
@@ -258,22 +311,24 @@ if __name__ == "__main__":
         diet = []
         if 1 in user_selected_restrictions:
             diet.append('vegan')
-        elif 2 in user_selected_restrictions:
+        if 2 in user_selected_restrictions:
             diet.append('vegetarian')
-        elif 3 in user_selected_restrictions:
+        if 3 in user_selected_restrictions:
             diet.append('gluten')
-        elif 4 in user_selected_restrictions:
+        if 4 in user_selected_restrictions:
             diet.append('lactose')
-
+        
         # Getting user preference for dining options
         user_dine_option = int(input('Please select a dining option: \n 1. Dine-in \n 2. Take-out\n 3. Delivery\n'))
 
+        dine_in_list = []
         if user_dine_option == 1:
-            dining = 'dine-in'
+            dine_in_list.append('dine-in')
         elif user_dine_option == 2:
-            dining = 'take-out'
+            dine_in_list.append('take-out')
         else:
-            dining = 'delivery'
+            dine_in_list.append('delivery')
+
         # Getting user preference for distance
         user_distance_option = int(input('Please select a distance from Queens campus:'
         ' \n 1. Under 10 minutes \n 2. Between 10 and 20 minutes \n 3. Over 20 minutes\n'))
@@ -287,7 +342,7 @@ if __name__ == "__main__":
 
 
         # Creating customer class to store information in an object for easier access
-        user = customer(price, diet, dining, distance)
+        user = customer(price, diet, dine_in_list, distance)
         
         # Need to iterate through the list and find which restaurants match with the users preference
         # using the example theory function. Use T.solve to find the solution to the users preferences and then match with
@@ -302,8 +357,12 @@ if __name__ == "__main__":
         for entry in restaurant_list:
             # print(entry.name)
             # iterating through each restaurant
-            current_restaurant = example_theory(entry,user)
-            x = current_restaurant.solve()
+            x = example_theory(entry,user).solve()
+
+            
+            example_theory(entry,user).is_satisfiable()
+            R1_score = example_theory(entry,user).count_solutions()
+
             print(x)
             # current_restaurant.is_satisfiable()
             # scores[entry.name] = current_restaurant.count_solutions()

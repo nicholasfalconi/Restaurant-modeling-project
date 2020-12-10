@@ -30,6 +30,7 @@ def readCSV():
         # iterate through each row
         for row in csv_reader:
             # setting variables to pass to restaurant constructor
+        
             diet_sel = [row[2],row[3],row[4],row[5]]
             dine_sel = [row[6],row[7],row[8]]
             time_sel = [row[9],row[10],row[11]]
