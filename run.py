@@ -18,7 +18,22 @@ class customer:
         self.userdiet = diet_opt
         self.userdine_opt = dine_opt
 
+low = Var('low')
+med = Var('med')
+high = Var('high')
 
+vegetrarian = Var('vegetarian')
+vegan = Var('vegan')
+gluten = Var('gluten')
+lactose = Var('lactose')
+
+dine_in = Var('dine-in')
+take_out = Var('take-out')
+delivery = Var('delivery')
+
+time_under_10 = Var('under 10')
+time_10_to_20 = Var('10 to 20')
+time_over_20 = Var('over 20')
 
 def example_theory(current_user):
 
@@ -55,14 +70,19 @@ def example_theory(current_user):
     # this is where our theory starts
 
     # price constraints
-    # pretty self explanitory
+    # must be one of $, $$, $$$
     E.add_constraint(price[0] | price[1] | price[2])
 
-    if current_user.userprice == 1:
+    # user selected $ for price
+    if current_user.userprice == 3:
         E.add_constraint((price[0] & price[1]).negate())
-    
-    E.add_constraint((price[0] & price[2]).negate())
-    E.add_constraint((price[1] & price[2]).negate())
+    # user selected $$ for price
+    elif current_user.userprice == 2:
+        E.add_constraint((price[0] & price[2]).negate())
+    # user selected $$$ for price
+    elif current_user.userprice == 1:
+        E.add_constraint((price[1] & price[2]).negate())
+    # Can't be $ and $$ and $$$
     E.add_constraint((price[0] & price[1] & price[2]).negate())
 
     # diet constraints
