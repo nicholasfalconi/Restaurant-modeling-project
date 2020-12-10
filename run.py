@@ -35,89 +35,89 @@ time_under_10 = Var('under 10')
 time_10_to_20 = Var('10 to 20')
 time_over_20 = Var('over 20')
 
-def example_theory(current_user):
+# def example_theory(current_user):
 
-    # Creates variables for each restaurant
+#     # Creates variables for each restaurant
 
-    # Propositions
-    # price
-    # price[0] = $, price[1] = $$, price[2] = $$$
-    price = []
-    for i in range(3):
-        price.append(Var(f"price_{i}"))
+#     # Propositions
+#     # price
+#     # price[0] = $, price[1] = $$, price[2] = $$$
+#     price = []
+#     for i in range(3):
+#         price.append(Var(f"price_{i}"))
 
-    # diet restrictions
-    # index 0 - 3 with each index corresponding to a certain dietary restriction
-    # index 0 = gluten free, index 1 = vegan, index 2 = vegetrarian, index 3 = lactose
-    diettype = []
-    for i in range(4):
-        diettype.append(Var(f"diettype_{i}"))
+#     # diet restrictions
+#     # index 0 - 3 with each index corresponding to a certain dietary restriction
+#     # index 0 = gluten free, index 1 = vegan, index 2 = vegetrarian, index 3 = lactose
+#     diettype = []
+#     for i in range(4):
+#         diettype.append(Var(f"diettype_{i}"))
 
-    dietrestrictions = []
-    for i in range(4):
-        dietrestrictions.append(Var(f"dietrstrct_{i}"))
+#     dietrestrictions = []
+#     for i in range(4):
+#         dietrestrictions.append(Var(f"dietrstrct_{i}"))
     
 
-    # Dine-in, take-out, delivery
-    # index 0 = dine-in, index 1 = take-out, index 2 = delivery
-    dine_options = []
-    for i in range(3):
-        dine_options.append(Var(f"dine_opt_{i}"))
+#     # Dine-in, take-out, delivery
+#     # index 0 = dine-in, index 1 = take-out, index 2 = delivery
+#     dine_options = []
+#     for i in range(3):
+#         dine_options.append(Var(f"dine_opt_{i}"))
 
 
-    E = Encoding()
+#     E = Encoding()
 
-    # this is where our theory starts
+#     # this is where our theory starts
 
-    # price constraints
-    # must be one of $, $$, $$$
-    E.add_constraint(price[0] | price[1] | price[2])
+#     # price constraints
+#     # must be one of $, $$, $$$
+#     E.add_constraint(price[0] | price[1] | price[2])
 
-    # user selected $ for price
-    if current_user.userprice == 3:
-        E.add_constraint((price[0] & price[1]).negate())
-    # user selected $$ for price
-    elif current_user.userprice == 2:
-        E.add_constraint((price[0] & price[2]).negate())
-    # user selected $$$ for price
-    elif current_user.userprice == 1:
-        E.add_constraint((price[1] & price[2]).negate())
-    # Can't be $ and $$ and $$$
-    E.add_constraint((price[0] & price[1] & price[2]).negate())
+#     # user selected $ for price
+#     if current_user.userprice == 3:
+#         E.add_constraint((price[0] & price[1]).negate())
+#     # user selected $$ for price
+#     elif current_user.userprice == 2:
+#         E.add_constraint((price[0] & price[2]).negate())
+#     # user selected $$$ for price
+#     elif current_user.userprice == 1:
+#         E.add_constraint((price[1] & price[2]).negate())
+#     # Can't be $ and $$ and $$$
+#     E.add_constraint((price[0] & price[1] & price[2]).negate())
 
-    # diet constraints
+#     # diet constraints
 
-    # accommodate one restrictions
-    E.add_constraint(dietrestrictions[0] | dietrestrictions[1] | dietrestrictions[2] | dietrestrictions[3])
-    # accommodate all of the restrictions
-    E.add_constraint(dietrestrictions[0] & dietrestrictions[1] & dietrestrictions[2] & dietrestrictions[3])
+#     # accommodate one restrictions
+#     E.add_constraint(dietrestrictions[0] | dietrestrictions[1] | dietrestrictions[2] | dietrestrictions[3])
+#     # accommodate all of the restrictions
+#     E.add_constraint(dietrestrictions[0] & dietrestrictions[1] & dietrestrictions[2] & dietrestrictions[3])
 
-    # accommodate two of the restrictions
-    E.add_constraint(dietrestrictions[0] & (diettype[1] | diettype[2] | diettype[3]))
-    E.add_constraint(dietrestrictions[1] & (diettype[0] | diettype[2] | diettype[3]))
-    E.add_constraint(dietrestrictions[2] & (diettype[0] | diettype[1] | diettype[3]))
-    E.add_constraint(dietrestrictions[3] & (diettype[0] | diettype[1] | diettype[2]))
+#     # accommodate two of the restrictions
+#     E.add_constraint(dietrestrictions[0] & (diettype[1] | diettype[2] | diettype[3]))
+#     E.add_constraint(dietrestrictions[1] & (diettype[0] | diettype[2] | diettype[3]))
+#     E.add_constraint(dietrestrictions[2] & (diettype[0] | diettype[1] | diettype[3]))
+#     E.add_constraint(dietrestrictions[3] & (diettype[0] | diettype[1] | diettype[2]))
 
-    # accommodate three of the restrictions (Yes I know they don't go in logical order this is just what I have written down)
+#     # accommodate three of the restrictions (Yes I know they don't go in logical order this is just what I have written down)
 
-    E.add_constraint(dietrestrictions[1] & dietrestrictions[3] & (diettype[0] | diettype[2]))
-    E.add_constraint(dietrestrictions[1] & dietrestrictions[0] & (diettype[3] | diettype[2]))
-    E.add_constraint(dietrestrictions[1] & dietrestrictions[2] & (diettype[3] | diettype[0]))
+#     E.add_constraint(dietrestrictions[1] & dietrestrictions[3] & (diettype[0] | diettype[2]))
+#     E.add_constraint(dietrestrictions[1] & dietrestrictions[0] & (diettype[3] | diettype[2]))
+#     E.add_constraint(dietrestrictions[1] & dietrestrictions[2] & (diettype[3] | diettype[0]))
 
-    # Eating location? not too sure what to call this
-    # all three (dine-in, take-out and delivery)
-    E.add_constraint(dine_options[0] & dine_options[1] & dine_options[2])
+#     # Eating location? not too sure what to call this
+#     # all three (dine-in, take-out and delivery)
+#     E.add_constraint(dine_options[0] & dine_options[1] & dine_options[2])
 
-    # must be one
-    E.add_constraint(dine_options[0] | dine_options[1] | dine_options[2])
+#     # must be one
+#     E.add_constraint(dine_options[0] | dine_options[1] | dine_options[2])
 
-    # can be two
-    E.add_constraint(dine_options[0] & (dine_options[1] | dine_options[2]))
-    E.add_constraint(dine_options[1] & (dine_options[0] | dine_options[2]))
-    E.add_constraint(dine_options[2] & (dine_options[0] | dine_options[1]))
+#     # can be two
+#     E.add_constraint(dine_options[0] & (dine_options[1] | dine_options[2]))
+#     E.add_constraint(dine_options[1] & (dine_options[0] | dine_options[2]))
+#     E.add_constraint(dine_options[2] & (dine_options[0] | dine_options[1]))
 
 
-    return E
+#     return E
 
 
 if __name__ == "__main__":
@@ -144,10 +144,13 @@ if __name__ == "__main__":
         # Telling user which price was selected as well as some exception handling
         if user_price in [1,2,3]:
             if user_price == 1:
+                price = 'low'
                 print('You selected $.')
             elif user_price == 2:
+                price = 'med'
                 print('You selected $$.')
             else:
+                price = 'high'
                 print('You selected $$$')
         else:
             print('Invalid input: Must be either option 1, 2 or 3')
@@ -165,12 +168,35 @@ if __name__ == "__main__":
         for entry in range(len(user_selected_restrictions)):
             user_selected_restrictions[entry] = int(user_selected_restrictions[entry])
 
+        if 1 in user_selected_restrictions:
+            diet = 'vegan'
+        elif 2 in user_selected_restrictions:
+            diet = 'vegetarian'
+        elif 3 in user_selected_restrictions:
+            diet = 'gluten'
+        elif 4 in user_selected_restrictions:
+            diet = 'lactose'
+
         # Getting user preference for dining options
         user_dine_option = int(input('Please select a dining option: \n 1. Dine-in \n 2. Take-out\n 3. Delivery\n'))
 
+        if user_dine_option == 1:
+            dining = 'dine-in'
+        elif user_dine_option == 2:
+            dining = 'take-out'
+        else:
+            dining = 'delivery'
         # Getting user preference for distance
         user_distance_option = int(input('Please select a distance from Queens campus:'
         ' \n 1. Under 10 minutes \n 2. Between 10 and 20 minutes \n 3. Over 20 minutes\n'))
+
+        if user_distance_option == 1:
+            distance = 'under 10'
+        elif user_distance_option == 2:
+            distance = '10 to 20'
+        else:
+            distance = 'over 20'
+
 
         # Creating customer class to store information in an object for easier access
         user = customer(user_price, user_selected_restrictions, user_dine_option)
@@ -179,9 +205,9 @@ if __name__ == "__main__":
         # using the example theory function. Use T.solve to find the solution to the users preferences and then match with
         # restaurants that match up
 
-        T = example_theory(user)
+        # T = example_theory(user)
         # dictionary with the mappings of the solution
-        examplesolution = T.solve()
+        # examplesolution = T.solve()
 
         for entry in restaurant_list:
             # iterating through to find which restaurant fits the solution
@@ -189,8 +215,8 @@ if __name__ == "__main__":
 
 
         # print("\nSatisfiable: %s" % T.is_satisfiable())
-        print("# Solutions: %d" % T.count_solutions())
-        print("   Solution: %s" % T.solve())
+        # print("# Solutions: %d" % T.count_solutions())
+        # print("   Solution: %s" % T.solve())
 
 '''
 Haven't implemented this w/ our variables
