@@ -19,24 +19,40 @@ class customer:
         self.userdine_opt = dine_opt
         self.distance = distance
 
+low = Var('low')
+med = Var('med')
+high = Var('high')
+
+vegetarian = Var('vegetarian')
+vegan = Var('vegan')
+gluten = Var('gluten')
+lactose = Var('lactose')
+
+dine_in = Var('dine-in')
+take_out = Var('take-out')
+delivery = Var('delivery')
+
+time_under_10 = Var('under 10')
+time_10_to_20 = Var('10 to 20')
+time_over_20 = Var('over 20')
 #Users option selection
 
 #Restaurant
 
 def priceConstraint(restaurant,customer):
-      if customer.userPrice == "low":
+    if customer.userprice == "low":
         if restaurant.price == "low":
             return low & ~med & ~high
         else:
             return low & ~med & ~high & ~low
 
-    if customer.userPrice == "med":
+    if customer.userprice == "med":
         if restaurant.price == "med":
             return med & ~high
         else:
             return med & ~high & ~high
 
-    if customer.userPrice == "high":
+    if customer.userprice == "high":
         if restaurant.price == "high":
             return high
         else:
@@ -215,9 +231,9 @@ if __name__ == "__main__":
         finalListR = []
         for entry in restaurant_list:
             # iterating through each restaurant
-            retaurant = example_theory(entry,user)
-            entry.is_satisfiable()
-            scores[entry.name] = entry.count_solutions()
+            current_restaurant = example_theory(entry,user)
+            # current_restaurant.is_satisfiable()
+            scores[entry.name] = current_restaurant.count_solutions()
 
         
         for key, value in scores.items():
