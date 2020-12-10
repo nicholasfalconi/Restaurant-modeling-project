@@ -156,29 +156,6 @@ def all_diet_constraint(restaurant,customer):
         else: 
             return vegetarian & ~vegetarian
 
-# works
-def dineInConstraint(restaurant,customer):
-    if customer.userdine_opt == 'dine-in':
-        if restaurant.delivery[0] == 'TRUE':
-            return dine_in
-        else:
-            return ~dine_in & dine_in
-
-def takeOutConstraint(restaurant,customer):
-    if customer.userdine_opt == 'take-out':
-        if restaurant.delivery[1] == 'TRUE':
-            return take_out
-        else:
-           return ~take_out & take_out
-
-def deliveryConstraint(restaurant,customer):
-    if customer.userdine_opt == 'delivery':
-        if restaurant.delivery[2] == 'TRUE':
-            return delivery
-        else:
-            return ~delivery & delivery
-
-
 def one_dining_constraints(restaurant, customer):
     if 'dine-in' in customer.userdine_opt:
         if restaurant.delivery[0] == 'TRUE':
@@ -200,19 +177,19 @@ def one_dining_constraints(restaurant, customer):
 
 def two_dining_constraints(restaurant, customer):
     if ('dine-in' in customer.userdine_opt) and ('take-out' in customer.userdine_opt):
-        if restaurant.delivery[0] == 'TRUE' & restaurant.delivery[1] == 'TRUE':
+        if restaurant.delivery[0] == 'TRUE' and restaurant.delivery[1] == 'TRUE':
             return dine_in & take_out & ~delivery
         else:
             return ~dine_in & dine_in 
 
     elif ('dine-in' in customer.userdine_opt) and ('delivery' in customer.userdine_opt):
-        if restaurant.delivery[0] == 'TRUE' & restaurant.delivery[2] == 'TRUE':
+        if restaurant.delivery[0] == 'TRUE' and restaurant.delivery[2] == 'TRUE':
             return dine_in & ~take_out & delivery
         else:
             return ~dine_in & dine_in
     
     elif ('take-out' in customer.userdine_opt) and ('delivery' in customer.userdine_opt):
-        if restaurant.delivery[1] == 'TRUE' & restaurant.delivery[2] == 'TRUE':
+        if restaurant.delivery[1] == 'TRUE' and restaurant.delivery[2] == 'TRUE':
             return ~dine_in & take_out & delivery
         else:
             return ~dine_in & dine_in
@@ -249,11 +226,30 @@ def example_theory(restaurant,customer):
     r = restaurant
     c = customer
     E = Encoding()
-    constraints = []
 
-    constraints = [price_constraint(r,c), single_diet_constraint(r,c),two_diet_constraint(r,c),three_diet_constraint(r,c), three_diet_constraint(r,c),all_diet_constraint(r,c),dineInConstraint(r,c), takeOutConstraint(r,c), deliveryConstraint(r,c), one_dining_constraints(r,c), two_dining_constraints(r,c), all_dining_constraints(r,c), distanceConstraint(r,c)]
+    # distance
+    E.add_constraint(distanceConstraint(r,c))
+    E.add_constraint(price_constraint(r,c))
+    # Adding dining constraints
+    if len(user.userdine_opt) == 1:
+        E.add_constraint(one_dining_constraints(r,c))
+    elif len(user.userdine_opt) == 2:
+        E.add_constraint(two_dining_constraints(r,c))
+    elif len(user.userdine_opt) == 3:
+        E.add_constraint(all_dining_constraints(r,c))
 
-    E.add_constraint(nnf.Or(constraints))
+    # Diet constraints
+    if len(user.userdiet) == 1:
+        if 5 in user.userdiet:
+            pass
+        else:
+            E.add_constraint(single_diet_constraint(r,c))
+    elif len(user.userdiet) == 2:
+        E.add_constraint(two_diet_constraint(r,c))
+    elif len(user.userdiet) == 3:
+        E.add_constraint(three_diet_constraint(r,c))
+    elif len(user.userdiet) == 4:
+        E.add_constraint(all_diet_constraint(r,c))
 
     return E
 
@@ -319,15 +315,17 @@ if __name__ == "__main__":
             diet.append('lactose')
         
         # Getting user preference for dining options
-        user_dine_option = int(input('Please select a dining option: \n 1. Dine-in \n 2. Take-out\n 3. Delivery\n'))
+        user_dine_option = input('Please select a dining option. If multiple separate by a comma: \n 1. Dine-in \n 2. Take-out\n 3. Delivery\n')
+        dine_in_list = user_dine_option.split(',')
 
-        dine_in_list = []
-        if user_dine_option == 1:
-            dine_in_list.append('dine-in')
-        elif user_dine_option == 2:
-            dine_in_list.append('take-out')
-        else:
-            dine_in_list.append('delivery')
+        final_list = []
+        if '1' in dine_in_list:
+            final_list.append('dine-in')
+        if '2' in dine_in_list:
+            final_list.append('take-out')
+        if '3' in dine_in_list:
+            final_list.append('delivery')
+        
 
         # Getting user preference for distance
         user_distance_option = int(input('Please select a distance from Queens campus:'
@@ -342,7 +340,7 @@ if __name__ == "__main__":
 
 
         # Creating customer class to store information in an object for easier access
-        user = customer(price, diet, dine_in_list, distance)
+        user = customer(price, diet, final_list, distance)
         
         # Need to iterate through the list and find which restaurants match with the users preference
         # using the example theory function. Use T.solve to find the solution to the users preferences and then match with
@@ -355,18 +353,28 @@ if __name__ == "__main__":
         scores = {}
         finalListR = []
         for entry in restaurant_list:
+            # print(user.userdine_opt)
             # print(entry.name)
+            T = example_theory(entry, user)
             # iterating through each restaurant
-            x = example_theory(entry,user).solve()
+            # print(T.is_satisfiable)
 
             
-            example_theory(entry,user).is_satisfiable()
-            R1_score = example_theory(entry,user).count_solutions()
+            y = example_theory(entry,user).is_satisfiable()
+            # print(y)
+            if y == True:
+                finalListR.insert(0, entry.name)
+            else:
+                finalListR.insert(len(finalListR), entry.name)
+            # R1_score = example_theory(entry,user).count_solutions()
+            # print(R1_score)
 
-            print(x)
+            # print(x)
             # current_restaurant.is_satisfiable()
             # scores[entry.name] = current_restaurant.count_solutions()
 
+        for i in range(len(finalListR)):
+            print(f"{i + 1}. %s" % finalListR[i])
         
-        for key, value in scores.items():
-            print(key, ' : ', value)
+        # for key, value in scores.items():
+        #     print(key, ' : ', value)
