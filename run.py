@@ -17,7 +17,6 @@ class customer:
         self.userdiet = diet_opt
         self.userdine_opt = dine_opt
 
-
 '''
 Restaurant class
 
@@ -60,19 +59,19 @@ class restaurant:
 #     dine_options.append(Var(f"dine_opt_{i}"))
 
 
-def example_theory():
+def example_theory(current_user, current_restaurant):
 
-# Have this here for reference, I know it is not how its supposed to work using this lib
+    # Creates variables for each restaurant
 
-# Propositions
-# price
+    # Propositions
+    # price
     price = []
     for i in range(3):
         price.append(Var(f"price_{i}"))
 
-# diet restrictions
-# index 0 - 3 with each index corresponding to a certain dietary restriction
-# index 0 = gluten free, index 1 = vegan, index 2 = vegetrarian, index 3 = lactose
+    # diet restrictions
+    # index 0 - 3 with each index corresponding to a certain dietary restriction
+    # index 0 = gluten free, index 1 = vegan, index 2 = vegetrarian, index 3 = lactose
     diettype = []
     for i in range(4):
         diettype.append(Var(f"diettype_{i}"))
@@ -81,8 +80,8 @@ def example_theory():
     for i in range(4):
         dietrestrictions.append(Var(f"dietrstrct_{i}"))
 
-# Dine-in, take-out, delivery
-# index 0 = dine-in, index 1 = take-out, index 2 = delivery
+    # Dine-in, take-out, delivery
+    # index 0 = dine-in, index 1 = take-out, index 2 = delivery
     dine_options = []
     for i in range(3):
         dine_options.append(Var(f"dine_opt_{i}"))
@@ -114,7 +113,7 @@ def example_theory():
     E.add_constraint(dietrestrictions[3] & (diettype[0] | diettype[1] | diettype[2]))
 
     # accommodate three of the restrictions (Yes I know they don't go in logical order this is just what I have written down)
-    # accommodate three of the restrictions (Yes I know they don't go in logical order this is just what I have written down)
+
     E.add_constraint(dietrestrictions[1] & dietrestrictions[3] & (diettype[0] | diettype[2]))
     E.add_constraint(dietrestrictions[1] & dietrestrictions[0] & (diettype[3] | diettype[2]))
     E.add_constraint(dietrestrictions[1] & dietrestrictions[2] & (diettype[3] | diettype[0]))
@@ -143,7 +142,7 @@ if __name__ == "__main__":
     while flag:
 
         # creating example theory
-        T = example_theory()
+        # T = example_theory()
         # Asking if user wants to continue or exit
         prog_exit = input('Welcome to the Queens restuarant finder! Press Q to quit or enter to continue.\n')
 
@@ -189,17 +188,18 @@ if __name__ == "__main__":
         # Creating customer class to store information in an object for easier access
         user = customer(user_price, user_selected_restrictions, user_dine_option)
         
+        # Need to iterate through the list and find which restaurants match with the users preference
+        # using the example theory function. Use T.solve to find the solution to the users preferences and then match with
+        # restaurants that match up
+
+        T = example_theory(user, 1)
+        # dictionary with the mappings of the solution
+        examplesolution = T.solve()
+
+
         print("\nSatisfiable: %s" % T.is_satisfiable())
         print("# Solutions: %d" % T.count_solutions())
         print("   Solution: %s" % T.solve())
-
-
-
-    # T = example_theory()
-
-    # print("\nSatisfiable: %s" % T.is_satisfiable())
-    # print("# Solutions: %d" % T.count_solutions())
-    # print("   Solution: %s" % T.solve())
 
 '''
 Haven't implemented this w/ our variables
@@ -209,3 +209,7 @@ Haven't implemented this w/ our variables
         print(" %s: %.2f" % (vn, T.likelihood(v)))
     print()
 '''
+
+
+
+# restaurants.append(restuarant(row[0], row[1], [row[2], row[3], row[4], row[5]] ))
