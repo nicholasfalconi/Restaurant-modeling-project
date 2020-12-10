@@ -1,4 +1,5 @@
 from nnf import Var
+from nnf import Or
 from lib204 import Encoding
 from csvReader import readCSV
 
@@ -129,8 +130,9 @@ def example_theory(restaurant,customer):
     r = restaurant
     c = customer
     E = Encoding()
+    constraints = [priceConstraint(r,c), dineInConstraint(r,c), takeOutConstraint(r,c), deliveryConstraint(r,c), distanceConstraint(r,c), glutenConstraint(r,c), lactoseConstraint(r,c), veganConstraint(r,c), vegetarianConstraint(r,c) ]
 
-    E.add_constraint(priceConstraint(r,c) | dineInConstraint(r,c) | takeOutConstraint(r,c) | deliveryConstraint(r,c) | distanceConstraint(r,c) | glutenConstraint(r,c) | lactoseConstraint(r,c) | veganConstraint(r,c) | vegetarianConstraint(r,c))
+    E.add_constraint(Or(constraints))
 
     return E
 
