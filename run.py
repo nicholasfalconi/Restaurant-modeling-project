@@ -13,10 +13,11 @@ Paramaters:
     dine_opt: preferred dining options
 '''
 class customer:
-    def __init__(self, price_opt, diet_opt, dine_opt):
+    def __init__(self, price_opt, diet_opt, dine_opt,distance):
         self.userprice = price_opt
         self.userdiet = diet_opt
         self.userdine_opt = dine_opt
+        self.distance = distance
 
 low = Var('low')
 med = Var('med')
@@ -35,89 +36,55 @@ time_under_10 = Var('under 10')
 time_10_to_20 = Var('10 to 20')
 time_over_20 = Var('over 20')
 
-# def example_theory(current_user):
+#Users option selection
 
-#     # Creates variables for each restaurant
+#Restaurant
 
-#     # Propositions
-#     # price
-#     # price[0] = $, price[1] = $$, price[2] = $$$
-#     price = []
-#     for i in range(3):
-#         price.append(Var(f"price_{i}"))
+def priceConstraint(restaurant,customer):
+      if customer.userPrice == "low":
+        if restaurant.price == "low":
+            return low & ~med & ~high
+        else:
+            return low & ~med & ~high & ~low
 
-#     # diet restrictions
-#     # index 0 - 3 with each index corresponding to a certain dietary restriction
-#     # index 0 = gluten free, index 1 = vegan, index 2 = vegetrarian, index 3 = lactose
-#     diettype = []
-#     for i in range(4):
-#         diettype.append(Var(f"diettype_{i}"))
+    if customer.userPrice == "med":
+        if restaurant.price == "med":
+            return low & ~med & ~high
+        else:
+            return med & ~high & ~low
 
-#     dietrestrictions = []
-#     for i in range(4):
-#         dietrestrictions.append(Var(f"dietrstrct_{i}"))
+    if customer.userPrice == "high":
+        if restaurant.price == "high":
+            return low & ~med & ~high
+        else:
+            return low & ~med & ~high & ~low
+
+def glutenConstraint(restaurant,customer):
+
+def lactoseConstraint(restaurant,customer):
+
+def veganConstraint(restaurant,customer):
+
+def vegetarianConstraint(restaurant,customer):
+
+def dineInConstraint(restaurant,customer):
+
+def takeOutConstraint(restaurant,customer):
+
+def deliveryConstraint(restaurant,customer):
+
+def distanceConstraint(restaurant,customer):
+
+def example_theory(restaurant,customer):
     
+    r = restaurant
+    E = Encoding()
 
-#     # Dine-in, take-out, delivery
-#     # index 0 = dine-in, index 1 = take-out, index 2 = delivery
-#     dine_options = []
-#     for i in range(3):
-#         dine_options.append(Var(f"dine_opt_{i}"))
+    E.add_constraint(priceConstraint(r) | dineInConstraint(r) | takeOutConstraint(r) | deliveryConstraint(r) | distanceConstraint(r) | glutenConstraint(r) | lactoseConstraint(r) | veganConstraint(r) | vegetarianConstraint(r))
 
+    return E
 
-#     E = Encoding()
-
-#     # this is where our theory starts
-
-#     # price constraints
-#     # must be one of $, $$, $$$
-#     E.add_constraint(price[0] | price[1] | price[2])
-
-#     # user selected $ for price
-#     if current_user.userprice == 3:
-#         E.add_constraint((price[0] & price[1]).negate())
-#     # user selected $$ for price
-#     elif current_user.userprice == 2:
-#         E.add_constraint((price[0] & price[2]).negate())
-#     # user selected $$$ for price
-#     elif current_user.userprice == 1:
-#         E.add_constraint((price[1] & price[2]).negate())
-#     # Can't be $ and $$ and $$$
-#     E.add_constraint((price[0] & price[1] & price[2]).negate())
-
-#     # diet constraints
-
-#     # accommodate one restrictions
-#     E.add_constraint(dietrestrictions[0] | dietrestrictions[1] | dietrestrictions[2] | dietrestrictions[3])
-#     # accommodate all of the restrictions
-#     E.add_constraint(dietrestrictions[0] & dietrestrictions[1] & dietrestrictions[2] & dietrestrictions[3])
-
-#     # accommodate two of the restrictions
-#     E.add_constraint(dietrestrictions[0] & (diettype[1] | diettype[2] | diettype[3]))
-#     E.add_constraint(dietrestrictions[1] & (diettype[0] | diettype[2] | diettype[3]))
-#     E.add_constraint(dietrestrictions[2] & (diettype[0] | diettype[1] | diettype[3]))
-#     E.add_constraint(dietrestrictions[3] & (diettype[0] | diettype[1] | diettype[2]))
-
-#     # accommodate three of the restrictions (Yes I know they don't go in logical order this is just what I have written down)
-
-#     E.add_constraint(dietrestrictions[1] & dietrestrictions[3] & (diettype[0] | diettype[2]))
-#     E.add_constraint(dietrestrictions[1] & dietrestrictions[0] & (diettype[3] | diettype[2]))
-#     E.add_constraint(dietrestrictions[1] & dietrestrictions[2] & (diettype[3] | diettype[0]))
-
-#     # Eating location? not too sure what to call this
-#     # all three (dine-in, take-out and delivery)
-#     E.add_constraint(dine_options[0] & dine_options[1] & dine_options[2])
-
-#     # must be one
-#     E.add_constraint(dine_options[0] | dine_options[1] | dine_options[2])
-
-#     # can be two
-#     E.add_constraint(dine_options[0] & (dine_options[1] | dine_options[2]))
-#     E.add_constraint(dine_options[1] & (dine_options[0] | dine_options[2]))
-#     E.add_constraint(dine_options[2] & (dine_options[0] | dine_options[1]))
-
-
-#     return E
+        
 
 
 if __name__ == "__main__":
@@ -168,14 +135,15 @@ if __name__ == "__main__":
         for entry in range(len(user_selected_restrictions)):
             user_selected_restrictions[entry] = int(user_selected_restrictions[entry])
 
+        diet = []
         if 1 in user_selected_restrictions:
-            diet = 'vegan'
+            diet.append('vegan')
         elif 2 in user_selected_restrictions:
-            diet = 'vegetarian'
+            diet.append('vegetarian')
         elif 3 in user_selected_restrictions:
-            diet = 'gluten'
+            diet.append('gluten')
         elif 4 in user_selected_restrictions:
-            diet = 'lactose'
+            diet.append('lactose')
 
         # Getting user preference for dining options
         user_dine_option = int(input('Please select a dining option: \n 1. Dine-in \n 2. Take-out\n 3. Delivery\n'))
@@ -199,7 +167,7 @@ if __name__ == "__main__":
 
 
         # Creating customer class to store information in an object for easier access
-        user = customer(user_price, user_selected_restrictions, user_dine_option)
+        user = customer(price, diet, user_dine_option, distance)
         
         # Need to iterate through the list and find which restaurants match with the users preference
         # using the example theory function. Use T.solve to find the solution to the users preferences and then match with
@@ -209,14 +177,13 @@ if __name__ == "__main__":
         # dictionary with the mappings of the solution
         # examplesolution = T.solve()
 
+
+
         for entry in restaurant_list:
-            # iterating through to find which restaurant fits the solution
-            print(entry.name)
-
-
-        # print("\nSatisfiable: %s" % T.is_satisfiable())
-        # print("# Solutions: %d" % T.count_solutions())
-        # print("   Solution: %s" % T.solve())
+            # iterating through each restaurant
+            retaurant = example_theory(entry,user)
+            entry.is_satisfiable()
+            [] = entry.count_solutions()
 
 '''
 Haven't implemented this w/ our variables
