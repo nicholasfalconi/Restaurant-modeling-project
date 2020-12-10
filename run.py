@@ -1,5 +1,6 @@
 from nnf import Var
 from lib204 import Encoding
+from csvReader import readCSV
 
 '''
 Customer class
@@ -17,54 +18,15 @@ class customer:
         self.userdiet = diet_opt
         self.userdine_opt = dine_opt
 
-'''
-Restaurant class
-
-Used to create a class containing information on a resaurant.
-Makes it easier to track data involving each restaurant
-
-actually will be implemented in the csv reader so this is irrelavant
-'''
-class restaurant:
-    def __init__(self, price_opt, diet_opt, delivery_opt, distance_opt):
-        self.price = price_opt
-        self.diet = diet_opt
-        self.delivery = delivery_opt
-        self.distance = distance_opt
-        # Need more info on whats going to be passed to make sure its all good
-
-# # Have this here for reference, I know it is not how its supposed to work using this lib
-
-# # Propositions
-# # price
-# price = []
-# for i in range(3):
-#     price.append(Var(f"price_{i}"))
-
-# # diet restrictions
-# # index 0 - 3 with each index corresponding to a certain dietary restriction
-# # index 0 = gluten free, index 1 = vegan, index 2 = vegetrarian, index 3 = lactose
-# diettype = []
-# for i in range(4):
-#     diettype.append(Var(f"diettype_{i}"))
-
-# dietrestrictions = []
-# for i in range(4):
-#     dietrestrictions.append(Var(f"dietrstrct_{i}"))
-
-# # Dine-in, take-out, delivery
-# # index 0 = dine-in, index 1 = take-out, index 2 = delivery
-# dine_options = []
-# for i in range(3):
-#     dine_options.append(Var(f"dine_opt_{i}"))
 
 
-def example_theory(current_user, current_restaurant):
+def example_theory(current_user):
 
     # Creates variables for each restaurant
 
     # Propositions
     # price
+    # price[0] = $, price[1] = $$, price[2] = $$$
     price = []
     for i in range(3):
         price.append(Var(f"price_{i}"))
@@ -79,6 +41,7 @@ def example_theory(current_user, current_restaurant):
     dietrestrictions = []
     for i in range(4):
         dietrestrictions.append(Var(f"dietrstrct_{i}"))
+    
 
     # Dine-in, take-out, delivery
     # index 0 = dine-in, index 1 = take-out, index 2 = delivery
@@ -94,7 +57,10 @@ def example_theory(current_user, current_restaurant):
     # price constraints
     # pretty self explanitory
     E.add_constraint(price[0] | price[1] | price[2])
-    E.add_constraint((price[0] & price[1]).negate())
+
+    if current_user.userprice == 1:
+        E.add_constraint((price[0] & price[1]).negate())
+    
     E.add_constraint((price[0] & price[2]).negate())
     E.add_constraint((price[1] & price[2]).negate())
     E.add_constraint((price[0] & price[1] & price[2]).negate())
@@ -137,6 +103,7 @@ def example_theory(current_user, current_restaurant):
 if __name__ == "__main__":
     # This is where we will get user input information and whatnot
     flag = True
+    restaurant_list = readCSV()
 
     # While loop to start
     while flag:
@@ -192,12 +159,16 @@ if __name__ == "__main__":
         # using the example theory function. Use T.solve to find the solution to the users preferences and then match with
         # restaurants that match up
 
-        T = example_theory(user, 1)
+        T = example_theory(user)
         # dictionary with the mappings of the solution
         examplesolution = T.solve()
 
+        for entry in restaurant_list:
+            # iterating through to find which restaurant fits the solution
+            print(entry.name)
 
-        print("\nSatisfiable: %s" % T.is_satisfiable())
+
+        # print("\nSatisfiable: %s" % T.is_satisfiable())
         print("# Solutions: %d" % T.count_solutions())
         print("   Solution: %s" % T.solve())
 
@@ -209,7 +180,3 @@ Haven't implemented this w/ our variables
         print(" %s: %.2f" % (vn, T.likelihood(v)))
     print()
 '''
-
-
-
-# restaurants.append(restuarant(row[0], row[1], [row[2], row[3], row[4], row[5]] ))
