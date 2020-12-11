@@ -8,6 +8,7 @@ actually will be implemented in the csv reader so this is irrelavant
 '''
 import csv
 
+# restaurant object for use in run.py
 class restaurant:
     def __init__(self, name, price_opt, diet_opt, delivery_opt, distance_opt):
         self.name = name
